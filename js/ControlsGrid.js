@@ -266,7 +266,7 @@ function(bs_colorpicker, bs_select, bs_slider, bs_spinbox) {
             value: function (text) {
                 var layout = '<div class="row">';
                 layout += '<div class="col-xs-12">';
-                layout += '<div class="alert alert-success" role="alert">' + text + '</div></div>';
+                layout += '<div class="alert alert-success" role="alert"><p class="text-center">' + text + '</p></div></div>';
                 this._$container.append(layout);
             }
         },
@@ -278,9 +278,10 @@ function(bs_colorpicker, bs_select, bs_slider, bs_spinbox) {
 
                 var subContainerId = 'sub-' + controlId;
                 var layout = '<div class="row"><div class="col-xs-12"><div class="panel-group">';
-                layout += '<div class="panel panel-default"><div id="' + controlId + '" class="panel-heading">';
-                layout += '<div class="panel-title btn-text" data-toggle="collapse" data-target="#'
-                    + subContainerId + '">' + '<span id="arrow-' + controlId + '" class="indicator glyphicon glyphicon-chevron-up pull-left"></span>&nbsp;'
+                layout += '<div class="panel panel-default" data-toggle="collapse" data-target="#'
+                    + subContainerId + '"><div id="' + controlId + '" class="panel-heading">';
+                layout += '<div class="panel-title btn-text">' + '<span id="arrow-' + controlId
+                    + '" class="indicator glyphicon glyphicon-chevron-down pull-left"></span>&nbsp;'
                     + name + '</div></div></div></div>';
                 layout += '<div id="' + subContainerId + '" class="panel-collapse collapse"></div>';
 
@@ -290,9 +291,9 @@ function(bs_colorpicker, bs_select, bs_slider, bs_spinbox) {
                 this._params[this._toKey(name)] = result;
 
                 var collapseIndicator = this._$container.find('#arrow-' + controlId);
-                this._$container.find('#' + controlId).on('click', function () {
-                    collapseIndicator.toggleClass('glyphicon-chevron-up');
+                this._$container.find('div.panel.panel-default').on('click', function () {
                     collapseIndicator.toggleClass('glyphicon-chevron-down');
+                    collapseIndicator.toggleClass('glyphicon-chevron-up');
                 });
 
                 return result;
