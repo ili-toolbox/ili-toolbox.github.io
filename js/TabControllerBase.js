@@ -9,6 +9,7 @@ function (EmperorViewControllerABC, ControlGrid, Workspace) {
     function TabControllerBase(container, title, description, workspace) {
         EmperorViewControllerABC['EmperorViewControllerABC'].call(this, container, title, description);
 
+        this._workspace = workspace;
         workspace.addEventListener(Workspace.Events.STATUS_CHANGE, this.refresh.bind(this));
 
         this._controlGrid = new ControlGrid(this.$body);
@@ -52,9 +53,9 @@ function (EmperorViewControllerABC, ControlGrid, Workspace) {
             }
         },
 
-        addTextBlock: {
+        addHintBlock: {
             value: function (text) {
-                return this._controlGrid.addTextBlock(text);
+                return this._controlGrid.addHintBlock(text);
             }
         },
 
@@ -66,7 +67,9 @@ function (EmperorViewControllerABC, ControlGrid, Workspace) {
 
         refresh: {
             value: function () {
-                this._controlGrid.refresh();
+                if (!this._workspace.status) { // status is empty ==> nothing is going on
+                    this._controlGrid.refresh();
+                }
             }
         },
 
