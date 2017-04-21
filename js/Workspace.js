@@ -261,6 +261,24 @@ function(ColorMap, EventSource, ImageLoader, InputFilesProcessor, MaterialLoader
             }
         },
 
+        spotsVisibility: {
+            get: function() {
+                return this._scene3d.spotsVisibility;
+            },
+            set: function (visibility) {
+                this._scene3d.spotsVisibility = visibility;
+            }
+        },
+
+        spotsColors: {
+            get: function() {
+                return this._scene3d.spotsColors;
+            },
+            set: function (colors) {
+                this._scene3d.spotsColors = colors;
+            }
+        },
+
         autoMinMax: {
             get: function() {
                 return this._autoMinMax;

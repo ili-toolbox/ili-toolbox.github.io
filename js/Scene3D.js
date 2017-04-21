@@ -192,6 +192,7 @@ function(EventSource, THREE) {
                             r: value[i].r,
                             intensity: value[i].intensity,
                             color: new THREE.Color(),
+                            visibility: 1.0,
                             name: value[i].name,
                         };
                     }
@@ -206,6 +207,58 @@ function(EventSource, THREE) {
                         this._notify(Scene3D.Events.CHANGE);
                     }
                 }
+            }
+        },
+
+        spotsVisibility: {
+            get: function() {
+                var result = {};
+                for (var i = 0; i < this._spots.length; i++) {
+                    var spot = this._spots[i];
+                    result[spot.name] = spot.visibility;
+                }
+                return result;
+            },
+            set: function (visibility) {
+                if (!this._spots) {
+                    return;
+                }
+
+                for (var i = 0; i < this._spots.length; i++) {
+                    var spot = this._spots[i];
+                    if (spot.name in visibility) {
+                        var v = visibility[spot.name];
+                        v = v < 0 ? 0 : v > 1 ? 1 : v;
+                        spot.visibility = v;
+                    }
+                }
+                this._recolor(true);
+                this._notify(Scene3D.Events.CHANGE);
+            }
+        },
+
+        spotsColors: {
+            get: function () {
+                var result = {};
+                for (var i = 0; i < this._spots.length; i++) {
+                    var spot = this._spots[i];
+                    result[spot.name] = spot.color.getHexString();
+                }
+                return result;
+            },
+            set: function (colors) {
+                if (!this._spots) {
+                    return;
+                }
+
+                for (var i = 0; i < this._spots.length; i++) {
+                    var spot = this._spots[i];
+                    if (spot.name in colors) {
+                        spot.color = new THREE.Color(colors[spot.name]);
+                    }
+                }
+                this._recolor(true);
+                this._notify(Scene3D.Events.CHANGE);
             }
         },
 
@@ -277,13 +330,13 @@ function(EventSource, THREE) {
 
         _getMeshMaterial: {
             value: function (materialName) {
+                var result = undefined;
                 if (materialName) {
-                    return this._meshMaterials.find(function (material) {
+                    result = this._meshMaterials.find(function (material) {
                         return material.name === materialName;
                     });
-                } else {
-                    return this._defaultMeshMaterial;
                 }
+                return result || this._defaultMeshMaterial;
             }
         },
 
@@ -384,16 +437,17 @@ function(EventSource, THREE) {
         },
 
         _recolor: {
-            value: function() {
+            value: function(ignoreColormap) {
                 var startTime = new Date();
                 var geometry = this.geometry;
                 var mapping = this.mapping;
                 var spots = this.spots;
+                var ignoreColormap = ignoreColormap || false;
 
                 var position = geometry.getAttribute('position');
                 var positionCount = position.array.length / position.itemSize;
 
-                if (mapping) {
+                if (mapping && !ignoreColormap) {
                     for (var i = 0; i < spots.length; i++) {
                         if (!isNaN(spots[i].intensity)) {
                             this._colorMap.map(spots[i].color, spots[i].intensity);
@@ -434,7 +488,7 @@ function(EventSource, THREE) {
                         if (index >= 0) {
                             var spot = spots[index];
                             if (!isNaN(spot.intensity)) {
-                                var alpha = 1.0 - spotBorder * closestSpotDistances[i];
+                                var alpha = (1.0 - spotBorder * closestSpotDistances[i]) * spot.visibility;
                                 var base = i * 3;
                                 color[base + 0] += (spot.color.r - color[base + 0]) * alpha;
                                 color[base + 1] += (spot.color.g - color[base + 1]) * alpha;
