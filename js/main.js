@@ -5,7 +5,7 @@
 
 define([
     'workspace', 'viewcontainer', 'viewgroup3d', 'mapselector', 'colormaps', 'filesaver', 'utils',
-    'dragndrop', 'text!../template.html', 'jquery', 'jqueryui', 'appsettingscontroller', 'spotscontroller'
+    'dragndrop', 'mainlayout', 'jquery', 'jqueryui', 'appsettingscontroller', 'spotscontroller'
 ],
 function (Workspace, ViewContainer, ViewGroup3D, MapSelector, ColorMap, saveAs, Utils,
     DragAndDrop, appLayout, $, $ui, AppSettingsController, SpotsController)
@@ -15,8 +15,10 @@ function (Workspace, ViewContainer, ViewGroup3D, MapSelector, ColorMap, saveAs, 
             alert('WebGL technology is not enabled in your browser. Turn it on to get `ili functioning properly.');
         }
 
-        this._appContainer = appContainer;
+        this._appContainer = document.createElement('div');
+        this._appContainer.id = 'ili-container';
         this._appContainer.innerHTML = appLayout;
+        appContainer.appendChild(this._appContainer);
 
         this._spotsController = new SpotsController();
         this._workspace = new Workspace(this._spotsController);
